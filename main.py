@@ -26,7 +26,8 @@ def run_stem_phase(domain: str) -> dict:
 
     observations = observe(domain)
     synthesis = synthesize(domain, observations)
-    agent_config = generate(domain, synthesis)
+    result = generate(domain, synthesis, observations)
+    agent_config = result["config"]
 
     return agent_config
 
@@ -34,7 +35,7 @@ def run_stem_phase(domain: str) -> dict:
 def run_agent_phase(agent_config: dict) -> None:
 
     print(f"[AGENT] Specialized agent ready: {agent_config.get('identity', '')}\n")
-    print(f"[AGENT] Type 'exit' to quit.\n")
+    print("[AGENT] Type 'exit' to quit.\n")
     print("-" * 60)
 
     while True:
