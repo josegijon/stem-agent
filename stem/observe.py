@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 import openai
 from openai import OpenAI
 
-from logger import get_logger
+from core.logger import get_logger
 
 load_dotenv()
 

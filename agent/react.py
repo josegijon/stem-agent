@@ -37,7 +37,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from agent.tools import TOOLS, execute_tool
-from logger import get_logger
+from core.logger import get_logger
 
 load_dotenv()
 

@@ -32,7 +32,7 @@ from pydantic import BaseModel
 
 from agent.react import run
 from eval.baseline import BASELINE_CONFIG
-from logger import get_logger
+from core.logger import get_logger
 from stem.generate import load_existing
 
 load_dotenv()

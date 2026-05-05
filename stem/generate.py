@@ -36,7 +36,7 @@ from typing import TypedDict
 
 from dotenv import load_dotenv
 
-from logger import get_logger
+from core.logger import get_logger
 from stem.observe import ObserveResult
 from stem.synthesize import SynthesizeResult
 from stem.schemas import (
