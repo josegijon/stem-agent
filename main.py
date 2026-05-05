@@ -24,7 +24,7 @@ import os
 from dotenv import load_dotenv
 
 from agent.react import run
-from logger import get_logger
+from core.logger import get_logger
 from stem.generate import generate, load_existing
 from stem.observe import observe
 from stem.synthesize import synthesize

@@ -32,7 +32,7 @@ import openai
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from logger import get_logger
+from core.logger import get_logger
 from stem.observe import ObserveResult
 from stem.schemas import TOOL_NAMES, AgentConfig
 
