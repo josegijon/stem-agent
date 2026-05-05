@@ -29,6 +29,7 @@ Design decisions:
 import os
 import subprocess
 import sys
+import re
 
 import openai
 from dotenv import load_dotenv
@@ -56,6 +57,24 @@ Search for current, accurate information and return a concise summary.
 Include specific facts, numbers, and sources where relevant.
 Be direct and informative. Do not add commentary about the search process.
 """
+
+
+def _strip_markdown_fences(code: str) -> str:
+    """
+    Remove markdown code fences from a code snippet.
+
+    The LLM frequently wraps code in ```python ... ``` blocks.
+    subprocess cannot execute these — only raw Python is valid.
+
+    Args:
+        code: Raw code string, possibly wrapped in markdown fences.
+
+    Returns:
+        Clean code string with fences removed.
+    """
+    code = re.sub(r"^```[a-zA-Z]*\n?", "", code.strip())
+    code = re.sub(r"\n?```$", "", code)
+    return code.strip()
 
 
 def web_search(query: str) -> str:
@@ -108,6 +127,7 @@ def run_code(code: str) -> str:
         stdout if successful, stderr if the code raised an error,
         or a timeout/execution error message.
     """
+    code = _strip_markdown_fences(code)
     log.debug("run_code executing snippet (%d chars)", len(code))
 
     try:
