@@ -24,6 +24,8 @@ The agent executes tasks using the ReAct pattern: Thought, Action, Observation i
 
 The tool pool is currently fixed at two tools, `web_search` and `run_code`, but the architecture supports expansion without structural changes. Adding a new tool means adding a function to `AGENT_TOOLS` in `agent/tools.py`. Because `stem/schemas.py` derives `ToolName` directly from that registry, the stem discovers the new tool automatically on the next transformation. A QA agent could request `run_code` and `read_file`. A Security agent could request `fetch_url` and `run_code`. The stem reasons about what it needs. The system provides what exists.
 
+**Observability and User Experience.** Building agents requires separating telemetry from user experience. The current architecture strictly separates them: the terminal provides a clean, dynamic UI (using `rich`) with progress tracking to manage perceived latency during the expensive stem phase. Meanwhile, a file-based logger asynchronously captures the full trace, token estimates, and system state. Furthermore, the system is designed to fail gracefully. If an API call fails or the ReAct loop hits its safety step limit, the system does not crash; it catches the exception and surfaces a clear system error to the UI.
+
 ---
 
 ## Experiments and what did not go as expected

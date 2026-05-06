@@ -25,6 +25,9 @@ Usage:
 import logging
 import os
 import sys
+from pathlib import Path
+
+LOG_DIR = Path("logs")
 
 
 def get_logger(name: str) -> logging.Logger:
@@ -42,6 +45,7 @@ def get_logger(name: str) -> logging.Logger:
         to prevent duplicate log entries.
     """
     log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+    debug_mode = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
     logger = logging.getLogger(name)
 
@@ -51,14 +55,26 @@ def get_logger(name: str) -> logging.Logger:
     logger.setLevel(log_level)
     logger.propagate = False
 
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(log_level)
+    # handler = logging.StreamHandler(sys.stdout)
+    # handler.setLevel(log_level)
 
     formatter = logging.Formatter(
         fmt="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
         datefmt="%H:%M:%S",
     )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    # handler.setFormatter(formatter)
+    # logger.addHandler(handler)
+
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(LOG_DIR / "agent.log", encoding="utf-8")
+    file_handler.setLevel(log_level)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    if debug_mode:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(log_level)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
     return logger

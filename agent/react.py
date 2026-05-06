@@ -104,6 +104,7 @@ class RunResult(TypedDict):
     answer: str  # Final answer or rejection message
     steps: int  # Number of ReAct steps executed
     accepted: bool  # Whether the task was accepted
+    error: bool  # True if the agent failed to complete the task
 
 
 def _build_system_prompt(agent_config: dict) -> str:
@@ -240,7 +241,7 @@ def run(task: str, agent_config: dict) -> RunResult:
             f"Please use an agent specialized for this type of task."
         )
         log.info("Task rejected.")
-        return RunResult(answer=rejection, steps=0, accepted=False)
+        return RunResult(answer=rejection, steps=0, accepted=False, error=False)
 
     log.info("Task accepted. Starting ReAct loop...")
 
@@ -264,6 +265,7 @@ def run(task: str, agent_config: dict) -> RunResult:
                 answer=f"Agent failed at step {step}: {e}",
                 steps=step,
                 accepted=True,
+                error=True,
             )
 
         assistant_message = response.choices[0].message.content
@@ -276,13 +278,17 @@ def run(task: str, agent_config: dict) -> RunResult:
             # Model produced a response without following ReAct format.
             # Treat as final answer rather than discarding.
             log.info("No action parsed at step %d — treating as final answer.", step)
-            return RunResult(answer=assistant_message, steps=step, accepted=True)
+            return RunResult(
+                answer=assistant_message, steps=step, accepted=True, error=False
+            )
 
         action, action_input = parsed
 
         if action == "direct_answer":
             log.info("Final answer reached at step %d.", step)
-            return RunResult(answer=action_input, steps=step, accepted=True)
+            return RunResult(
+                answer=action_input, steps=step, accepted=True, error=False
+            )
 
         observation = execute_tool(action, action_input)
         messages.append({"role": "user", "content": f"Observation: {observation}"})
@@ -293,6 +299,7 @@ def run(task: str, agent_config: dict) -> RunResult:
         answer="Max steps reached without a final answer.",
         steps=_MAX_STEPS,
         accepted=True,
+        error=True,
     )
 
 

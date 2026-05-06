@@ -47,6 +47,9 @@ stem-agent/
 ├── config/
 │   └── generated/       # Generated agent configs and traces (gitignored)
 │
+├── logs/
+│   └── agent.log       # Generated logs (gitignored)
+│
 ├──core/
 │   └── logger.py       # Shared logging configuration
 │
@@ -90,6 +93,7 @@ STEM_DOMAIN=Technical Research
 LOG_LEVEL=INFO
 REACT_MAX_STEPS=12
 BENCHMARK_RUNS=3
+DEBUG=false
 ```
 
 ---
